@@ -9,7 +9,7 @@ class Map:
         self.ylen = len(self.map.index)
     
     def _get_unique_point(self, cellValue:str) -> tuple[int,int]:
-        loc = map.where(map == cellValue).dropna(how='all').dropna(axis=1,how='all')
+        loc = self.map.where(map == cellValue).dropna(how='all').dropna(axis=1,how='all')
         return loc.index[0], loc.columns[0]
 
     def get_starting_point(self) -> tuple[int,int]:
@@ -17,6 +17,10 @@ class Map:
 
     def get_final_point(self) -> tuple[int,int]:
         return self._get_unique_point("F")
+
+    def get_node_weight(self, coordinates) -> int:
+        weight = self.map.loc[coordinates[0],coordinates[1]]
+        return self.transform_str_to_values(weight)
 
     def transform_str_to_values(self, cellweights_path:str):
         cellweights = pd.read_csv(cellweights_path, header=None).to_dict()
