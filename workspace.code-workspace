@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "..\\.venv3.9.0"
+		},
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"python.pythonPath": "..\\.venv3.9.0\\Scripts\\python.exe"
+	}
+}
