@@ -1,36 +1,34 @@
 import pandas as pd
+import numpy as np
 import pathlib
 
 
 class Map:
-    def __init__(self, map_path:str):
+    def __init__(self, map_path:str, cellweights_path:str):
         self.map = pd.read_csv(map_path, header=None)
-        self.xlen = len(self.map.columns)
-        self.ylen = len(self.map.index)
+        self.map_values = self._transform_str_to_values(cellweights_path)
+        self.start_point = self._get_unique_point("I")
+        self.final_point = self._get_unique_point("F")
+        self.xlen = len(self.map.index)
+        self.ylen = len(self.map.columns)
+        self.heuristic_map = pd.DataFrame(0, index=np.arange(self.xlen), columns=np.arange(self.ylen)).apply(lambda row: abs(row.index - self.final_point[0]) + abs(int(row.name) - self.final_point[1]))
     
     def _get_unique_point(self, cellValue:str) -> tuple[int,int]:
-        loc = self.map.where(map == cellValue).dropna(how='all').dropna(axis=1,how='all')
+        loc = self.map.where(self.map == cellValue).dropna(how='all').dropna(axis=1,how='all')
         return loc.index[0], loc.columns[0]
 
-    def get_starting_point(self) -> tuple[int,int]:
-        return self._get_unique_point("I")
-
-    def get_final_point(self) -> tuple[int,int]:
-        return self._get_unique_point("F")
-
     def get_node_weight(self, coordinates) -> int:
-        weight = self.map.loc[coordinates[0],coordinates[1]]
-        return self.transform_str_to_values(weight)
+        return self.map_values.loc[coordinates[0], coordinates[1]]
 
-    def transform_str_to_values(self, cellweights_path:str):
-        cellweights = pd.read_csv(cellweights_path, header=None).to_dict()
+    def get_heuristic_weight(self, coordinates:tuple[int, int]):
+        return self.heuristic_map.loc[coordinates[0], coordinates[1]]
 
-        pass
+    def _transform_str_to_values(self, cellweights_path:str) -> pd.DataFrame:
+        cellweights = pd.read_csv(cellweights_path, header=None, index_col=0, squeeze=True).to_dict()
+        cellweights.update({'F': 1, 'I': 1, 'B': 1})
 
-
-
-
-
+        return self.map.replace(cellweights)
+        
 
 class Agent:
     def __init__(self):
@@ -42,9 +40,3 @@ class Agent:
     def move_to_coordinate(self, x:int, y:int):
         pass
 
-
-input_path = pathlib.Path(__file__).parents[1].joinpath('input')
-m = Map(input_path.joinpath('map.csv'))
-
-a = Agent()
-a.move_to_coordinate(m.get_starting_point)
