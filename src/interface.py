@@ -1,5 +1,6 @@
 import pygame
 import pandas as pd
+import time 
 
 
 class TravelMapInterface:
@@ -11,7 +12,7 @@ class TravelMapInterface:
         pygame.display.update()
 
 
-def draw_grid(map, width, height, spacing=2, **kawrgs):
+def draw_grid(map, width, height, spacing=2, **kwargs):
     for y in range(height):
         for x in range(width):
             print('%%-%ds' % spacing % draw_tile(map, (x, y), kwargs), end='')
@@ -33,4 +34,4 @@ def draw_tile(map, coordinates, kwargs):
     
         
 
-t = TravelMapInterface()
+t = TravelMapInterface(pd.DataFrame({}))
