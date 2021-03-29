@@ -2,7 +2,7 @@ import pathlib
 from controllers import Map
 
 class Node:
-    def __init__(self, coordinates:tuple[int, int], node_weight:int, parent):
+    def __init__(self, coordinates, node_weight:int, parent):
         self.coordinates = coordinates
         self.node_weight = node_weight
         self.total_path_cost = node_weight
@@ -35,7 +35,12 @@ def Astar(map:Map):
         working_node = priority_queue.pop(0)
         closed_nodes.append(working_node)
         if working_node == end:
-            break
+            path.append(working_node)
+            while working_node.parent_node is not None:
+                path.append(working_node.parent_node)
+                working_node = working_node.parent_node
+            return path
+        
         x,y = working_node.coordinates
         neighbours_coords = []
         if x+1 < map.xlen:
@@ -57,10 +62,7 @@ def Astar(map:Map):
             #add neighbor in priority queue if it was not visited before or has lower heuristic value than previous instance
             if(valid_new_open_node(priority_queue, neighbor_node)):
                 priority_queue.append(neighbor_node)
-
-    while working_node.parent_node is not None:
-        path.append(working_node.parent_node)
-        working_node = working_node.parent_node
+    
     return None
 
 

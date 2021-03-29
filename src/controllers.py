@@ -13,14 +13,14 @@ class Map:
         self.ylen = len(self.map.columns)
         self.heuristic_map = pd.DataFrame(0, index=np.arange(self.xlen), columns=np.arange(self.ylen)).apply(lambda row: abs(row.index - self.final_point[0]) + abs(int(row.name) - self.final_point[1]))
     
-    def _get_unique_point(self, cellValue:str) -> tuple[int,int]:
+    def _get_unique_point(self, cellValue:str):
         loc = self.map.where(self.map == cellValue).dropna(how='all').dropna(axis=1,how='all')
         return loc.index[0], loc.columns[0]
 
     def get_node_weight(self, coordinates) -> int:
         return self.map_values.loc[coordinates[0], coordinates[1]]
 
-    def get_heuristic_weight(self, coordinates:tuple[int, int]):
+    def get_heuristic_weight(self, coordinates):
         return self.heuristic_map.loc[coordinates[0], coordinates[1]]
 
     def _transform_str_to_values(self, cellweights_path:str) -> pd.DataFrame:
