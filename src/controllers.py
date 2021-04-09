@@ -18,14 +18,18 @@ class Map:
         return loc.index[0], loc.columns[0]
 
     def get_node_weight(self, coordinates) -> int:
-        return self.map_values.loc[coordinates[0], coordinates[1]]
+        value = self.map_values.loc[coordinates[0], coordinates[1]]
+        return value
+
+    def get_node_label(self, coordinates) -> str:
+        return self.map.loc[coordinates[0], coordinates[1]]
 
     def get_heuristic_weight(self, coordinates):
         return self.heuristic_map.loc[coordinates[0], coordinates[1]]
 
     def _transform_str_to_values(self, cellweights_path:str) -> pd.DataFrame:
-        cellweights = pd.read_csv(cellweights_path, header=None, index_col=0, squeeze=True).to_dict()
-        cellweights.update({'F': 1, 'I': 1, 'B': 1})
+        #cellweights = pd.read_csv(cellweights_path, header=None, index_col=0, squeeze=True).to_dict()
+        cellweights = {'F': 1, 'I': 1, 'B': 3, 'M': 200, 'R': 5, '.': 1}
 
         return self.map.replace(cellweights)
         
@@ -40,3 +44,14 @@ class Agent:
     def move_to_coordinate(self, x:int, y:int):
         pass
 
+'''
+map_path = 'map.csv'
+
+path = '../input/'
+
+cellweights_path = '/cellweights.csv'
+
+m = Map( path + map_path,path + cellweights_path)
+
+print(m.map[0][0])
+'''
