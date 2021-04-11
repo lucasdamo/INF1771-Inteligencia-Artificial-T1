@@ -43,15 +43,3 @@ class Agent:
 
     def move_to_coordinate(self, x:int, y:int):
         pass
-
-'''
-map_path = 'map.csv'
-
-path = '../input/'
-
-cellweights_path = '/cellweights.csv'
-
-m = Map( path + map_path,path + cellweights_path)
-
-print(m.map[0][0])
-'''

@@ -1,0 +1,68 @@
+{"frames": {
+
+    "pokeball1.png":
+    {
+        "frame": {"x":0,"y":0,"w":16,"h":24},
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": {"x":0,"y":0,"w":16,"h":24},
+        "sourceSize": {"w":8,"h":8}
+    },
+    "pokeball2.png":
+    {
+        "frame": {"x":16,"y":0,"w":16,"h":24},
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": {"x":0,"y":0,"w":16,"h":24},
+        "sourceSize": {"w":8,"h":8}
+    },
+    "pokeball3.png":
+    {
+        "frame": {"x":32,"y":0,"w":16,"h":24},
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": {"x":0,"y":0,"w":16,"h":24},
+        "sourceSize": {"w":8,"h":8}
+    },
+    "pokeball4.png":
+    {
+        "frame": {"x":48,"y":0,"w":16,"h":24},
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": {"x":0,"y":0,"w":16,"h":24},
+        "sourceSize": {"w":8,"h":8}
+    },
+    "pokeball5.png":
+    {
+        "frame": {"x":64,"y":0,"w":16,"h":24},
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": {"x":0,"y":0,"w":16,"h":24},
+        "sourceSize": {"w":8,"h":8}
+    },
+    "pokeball6.png":
+    {
+        "frame": {"x":80,"y":0,"w":16,"h":24},
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": {"x":0,"y":0,"w":16,"h":24},
+        "sourceSize": {"w":8,"h":8}
+    },
+    "pokeball7.png":
+    {
+        "frame": {"x":96,"y":0,"w":16,"h":24},
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": {"x":0,"y":0,"w":16,"h":24},
+        "sourceSize": {"w":8,"h":8}
+    },
+    "pokeball8.png":
+    {
+        "frame": {"x":112,"y":0,"w":16,"h":24},
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": {"x":0,"y":0,"w":16,"h":24},
+        "sourceSize": {"w":8,"h":8}
+    }
+    }
+}

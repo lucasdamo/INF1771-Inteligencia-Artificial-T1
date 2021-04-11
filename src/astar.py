@@ -27,16 +27,26 @@ class Astar:
         self.closed_nodes = []
         self.path = []
         self.over = False
-
+        
         self.priority_queue.append(self.start)
 
-    def advance(self,steps):
+    def solve(self): #solves the algorithm by calling 'advance' method with a very large number until it's done
+        steps = 1000
+        while not self.over:
+            self.advance(steps)
+            steps = steps * 1000 #calling in multiples to speed up
+
+    def advance(self,steps): #advances the algorithm by the amount of steps provided
         while self.priority_queue and steps > 0 and not self.over:
             self.priority_queue.sort()
             working_node = self.priority_queue.pop(0)
             self.closed_nodes.append(working_node)
             if working_node == self.end:
                 self.over = True
+                self.path.append(invert_coordinates(working_node.coordinates))
+                while working_node.parent_node is not None:
+                    self.path.append(invert_coordinates(working_node.parent_node.coordinates))
+                    working_node = working_node.parent_node
                 return
             x,y = working_node.coordinates
             neighbours_coords = []
@@ -61,10 +71,15 @@ class Astar:
                     self.priority_queue.append(neighbor_node)
             steps -= 1
         return
-    
+    def get_visual_elements(self):
+        path = self.get_best_path()
+        open_nodes = self.get_all_open_nodes()
+        closed_nodes = self.get_all_closed_nodes()
+        return path,open_nodes,closed_nodes
+
+
     def get_best_path(self): #returns the current best path found
-        if not self.over:
-            print(self.priority_queue[0].coordinates) 
+        if not self.over: 
             self.path = []
             working_node = self.priority_queue[0]
             self.path.append(invert_coordinates(working_node.coordinates))
@@ -76,15 +91,17 @@ class Astar:
     def get_all_open_nodes(self): #returns all open nodes not in path
         open_nodes = []
         for node in self.priority_queue:
-            if node.coordinates not in self.path:
-                open_nodes.append(invert_coordinates(node.coordinates))
+            node_coordinates_fixed = invert_coordinates(node.coordinates)
+            if node_coordinates_fixed not in self.path:
+                open_nodes.append(node_coordinates_fixed)
         return open_nodes
     
     def get_all_closed_nodes(self): #returns all closed nodes not in path
         closed_nodes = []
         for node in self.closed_nodes:
-            if node.coordinates not in self.path:
-                closed_nodes.append(invert_coordinates(node.coordinates))
+            node_coordinates_fixed = invert_coordinates(node.coordinates)
+            if node_coordinates_fixed not in self.path:
+                closed_nodes.append(node_coordinates_fixed)
         return closed_nodes
 
 def invert_coordinates(c):
