@@ -8,6 +8,15 @@
 		},
 		{
 			"path": "src"
+		},
+		{
+			"path": "imagens"
+		},
+		{
+			"path": "sound"
+		},
+		{
+			"path": "Tilemap"
 		}
 	],
 	"settings": {

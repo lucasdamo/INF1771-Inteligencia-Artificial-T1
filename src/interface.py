@@ -8,6 +8,7 @@ import sys
 import numpy as np
 from spritesheet import Spritesheet
 from astar import Astar
+from pathlib import Path
 
 BLACK = (0, 0, 0)
 GREY = (160,160,160)
@@ -17,9 +18,9 @@ WINDOW_HEIGHT = 0
 WINDOW_WIDTH = 0
 SCREEN = 0
 blockSize = 16 #Set the size of the grid block
-path = "input/"
-img_path = "imagens/"
-sound_path = "sound/"
+input_path = Path(__file__).parents[1].joinpath('input')
+img_path = Path(__file__).parents[1].joinpath('imagens')
+sound_path = Path(__file__).parents[1].joinpath('sound')
 map_list = 0
 sprite_index = 0
 trainer_sprites = []
@@ -42,9 +43,8 @@ def main():
     global aStar_struct
 
     #Create map 
-    map_path = "map.csv"
-    cellweights_path = "cellweights.csv"
-    pandas_map = Map(path + map_path,path + cellweights_path)
+
+    pandas_map = Map(input_path.joinpath("map.csv"),input_path.joinpath("cellweights.csv"))
 
     aStar_struct = Astar(pandas_map)
 
@@ -107,7 +107,7 @@ def drawGrid():
     global WINDOW_HEIGHT
     global map_list
     global SCREEN
-    tiles_src = pygame.image.load(img_path +  "BW_PublicOutside_New.png")
+    tiles_src = pygame.image.load(img_path.joinpath("BW_PublicOutside_New.png"))
     tiles_src = scaleToBlocksize(tiles_src)
     for y in range(len(map_list)):
         for x in range(len(map_list[y])):
@@ -139,18 +139,18 @@ def setupBattles():
     
 
     trainers_list = [
-        scaleToBlocksize(pygame.image.load(img_path + 'trchar001.png')),
-        scaleToBlocksize(pygame.image.load(img_path + 'trchar002.png')),
-        scaleToBlocksize(pygame.image.load(img_path + 'trchar003.png')),
-        scaleToBlocksize(pygame.image.load(img_path + 'trchar004.png')),
-        scaleToBlocksize(pygame.image.load(img_path + 'trchar011.png')),
-        scaleToBlocksize(pygame.image.load(img_path + 'trchar014.png')),
-        scaleToBlocksize(pygame.image.load(img_path + 'trchar016.png')),
-        scaleToBlocksize(pygame.image.load(img_path + 'trchar024.png')),
-        scaleToBlocksize(pygame.image.load(img_path + 'trchar031.png')),
-        scaleToBlocksize(pygame.image.load(img_path + 'trchar056.png')),
-        scaleToBlocksize(pygame.image.load(img_path + 'trchar065.png')),
-        scaleToBlocksize(pygame.image.load(img_path + 'trchar066.png'))
+        scaleToBlocksize(pygame.image.load(img_path.joinpath( 'trchar001.png'))),
+        scaleToBlocksize(pygame.image.load(img_path.joinpath( 'trchar002.png'))),
+        scaleToBlocksize(pygame.image.load(img_path.joinpath( 'trchar003.png'))),
+        scaleToBlocksize(pygame.image.load(img_path.joinpath( 'trchar004.png'))),
+        scaleToBlocksize(pygame.image.load(img_path.joinpath( 'trchar011.png'))),
+        scaleToBlocksize(pygame.image.load(img_path.joinpath( 'trchar014.png'))),
+        scaleToBlocksize(pygame.image.load(img_path.joinpath( 'trchar016.png'))),
+        scaleToBlocksize(pygame.image.load(img_path.joinpath( 'trchar024.png'))),
+        scaleToBlocksize(pygame.image.load(img_path.joinpath( 'trchar031.png'))),
+        scaleToBlocksize(pygame.image.load(img_path.joinpath( 'trchar056.png'))),
+        scaleToBlocksize(pygame.image.load(img_path.joinpath( 'trchar065.png'))),
+        scaleToBlocksize(pygame.image.load(img_path.joinpath( 'trchar066.png')))
     ]
 
     return battle_list, trainers_list
@@ -172,7 +172,7 @@ def drawBattles(battle_list,trainers_list):
 
 def setupTrainer():
     trainer_file = 'trchar000.png'
-    trainer_spritesheet = Spritesheet(img_path + trainer_file)
+    trainer_spritesheet = Spritesheet(img_path.joinpath( trainer_file))
     trainer_list = [
         trainer_spritesheet.parse_sprite('trainerD1.png'),
         trainer_spritesheet.parse_sprite('trainerD2.png'),
@@ -195,7 +195,7 @@ def setupTrainer():
 
 def setupPokeballPath():
     pokeball_file = 'ball_00.png'
-    pokeball_spritesheet = Spritesheet(img_path + pokeball_file)
+    pokeball_spritesheet = Spritesheet(img_path.joinpath( pokeball_file))
     pokeball_list = [
         pokeball_spritesheet.parse_sprite('pokeball1.png'),
         pokeball_spritesheet.parse_sprite('pokeball2.png'),
@@ -235,10 +235,10 @@ def drawAstar(open_nodes,closed_nodes):
     closed_node_img = 'safari_rock.png'
 
 
-    open_node_src = pygame.image.load(img_path + open_node_img)
+    open_node_src = pygame.image.load(img_path.joinpath( open_node_img))
     open_node_src = scaleToBlocksize(scaleToBlocksize(open_node_src))
     
-    closed_node_src = pygame.image.load(img_path + closed_node_img)
+    closed_node_src = pygame.image.load(img_path.joinpath( closed_node_img))
     closed_node_src = scaleToBlocksize(scaleToBlocksize(closed_node_src))
 
 
