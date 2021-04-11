@@ -1,0 +1,5 @@
+.venv
+*.code-workspace
+*.txt
+./src/__pycache__
+.vscode

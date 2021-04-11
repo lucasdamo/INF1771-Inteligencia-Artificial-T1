@@ -1,13 +1,16 @@
 {
 	"folders": [
 		{
-			"path": "..\\.venv3.9.0"
+			"path": "docs"
 		},
 		{
-			"path": "."
+			"path": "input"
+		},
+		{
+			"path": "src"
 		}
 	],
 	"settings": {
-		"python.pythonPath": "..\\.venv3.9.0\\Scripts\\python.exe"
+		"python.pythonPath": "c:\\Users\\Lucas\\Documents\\GitHub\\INF1771-Inteligencia-Artificial-T1\\.venv\\Scripts\\python.exe"
 	}
 }
