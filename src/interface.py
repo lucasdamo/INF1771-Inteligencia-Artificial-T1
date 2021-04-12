@@ -67,15 +67,22 @@ def main():
     
     battle_list,trainers_list = setupBattles()
 
+    next_step = 0 #variable to time player animation
+
     while running:
         checkEvents()
         drawGrid()
         drawBattles(battle_list,trainers_list)
         drawTrainer(trainer_sprites,trainer_sprite_index,player_position)
-        drawAstar(open_nodes,closed_nodes)
+        if not aStar_struct.over:
+            drawAstar(open_nodes,closed_nodes)
         drawPokeballPath(pokeball_sprites,trainer_pokeball_index,best_path)
         pygame.display.update()
-        trainer_pokeball_index = (trainer_pokeball_index + 1) % 8
+
+        trainer_pokeball_index = (trainer_pokeball_index + 1) % 8 
+        if next_step % 4 == 0: 
+            trainer_sprite_index = (trainer_sprite_index + 1) % 4
+        next_step += 1
         clock.tick(60) #60 FPS
 
 def checkEvents():
@@ -134,7 +141,7 @@ def setupBattles():
     battle_list = []
     for y in range(len(map_list)):
         for x in range(len(map_list[y])):
-            if map_list[y][x] == 'B':
+            if map_list[y][x][0] == 'B':
                 battle_list.append((x,y))
     
 
@@ -159,15 +166,13 @@ def setupBattles():
     #TODO:make routine to remove coordinates from list if battle is won
 
 def drawBattles(battle_list,trainers_list):
-    #draw pokeballs of battles yet to occur
-    i = 0
+    #draw each trainer in coordinate
+    i = -1
     for coordinates in battle_list:
         coordinates = scaleCoordinates(coordinates)
         coordinates[1] = coordinates[1] - blockSize/2 #raises trainer by half blocksize to level to ground
         SCREEN.blit(trainers_list[i],coordinates,(0,0,blockSize, 3/2 * blockSize))
-        i = i + 1
-    
-    #draw each trainer in coordinate
+        i = i - 1
     return
 
 def setupTrainer():
