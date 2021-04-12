@@ -13,6 +13,7 @@ from collections import deque
 from pathlib import Path
 from typing import List
 from tqdm import tqdm
+import time
 
 import numpy as np
 import pandas as pd
@@ -338,11 +339,11 @@ def reverse_random_gym(p:PokemonSelection) -> PokemonSelection:
 
 def gena():
     # Run the genetic algortihm
-
     pool = init_generation(INIT_GENERATION)
     previous_best = pool[0]
     generations_without_improvement = 0
-
+    total_generations = 0
+    ini_time = time.time()
     loop = tqdm(total=MAX_GENERATION_WITHOUT_IMPROVMENT)
     while generations_without_improvement < MAX_GENERATION_WITHOUT_IMPROVMENT:
         loop.set_description(f"Pool {len(pool)} Best {previous_best.calculate_time()}")
@@ -367,7 +368,7 @@ def gena():
         _ = 1
         for x in w_random_individuals:
             prev = x
-            for f in [scramble_gymns, exchange_pokemon, reverse_sequence, random_shift, remove_random_pokemon, add_random_pokemon, reverse_random_gym]:
+            for f in [scramble_gymns, exchange_pokemon, reverse_sequence, random_shift, remove_random_pokemon, add_random_pokemon, reverse_random_gym, exchange_multiple_pokemon]:
                 prev = f(prev)
                 c = f(x)
                 if c.is_valid:
@@ -377,7 +378,7 @@ def gena():
                 
 
         # BUSCA GULOSA NA VIZINHANÇA
-
+        total_generations += 1
         pool.sort(key=lambda x: x.fitness)
         best = pool[-1]
         if best.calculate_time() >= previous_best.calculate_time():
@@ -388,7 +389,7 @@ def gena():
             generations_without_improvement = 0
             loop.reset(MAX_GENERATION_WITHOUT_IMPROVMENT)
 
-    print(f"\n\nResult {pool[-1].calculate_time()} = {[list(compress(pokemon_name, x)) for x in pool[-1].cut_into_gyms()]}")
+    print(f"\nTotal generations {total_generations}.\tExecution Time {time.time() - ini_time} seconds.\nResult {pool[-1].calculate_time()} = {[list(compress(pokemon_name, x)) for x in pool[-1].cut_into_gyms()]}")
     result_per_gym = []
     i = 0
     for gym in pool[-1].cut_into_gyms():
