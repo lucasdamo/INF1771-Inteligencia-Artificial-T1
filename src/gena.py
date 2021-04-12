@@ -214,14 +214,26 @@ class PokemonSelection(Chromosome):
         self._fitness = None
 
     def exchange_random_pokemon(self):
-        rand_i = random.randrange(0, self.num_pokemons)
-        rand_j = random.randrange(0, self.num_pokemons)
-        for gym_i in range(0, self.num_gyms):
-            if self.sequence[gym_i * 5 + rand_i]:
-                self.sequence[gym_i * 5 + rand_i] = False
-                self.sequence[gym_i * 5 + rand_j] = True
+        rand_gym_i = random.randrange(self.num_gyms) * self.num_pokemons
+        rand_gym_j = random.randrange(self.num_gyms) * self.num_pokemons
+        all_i = []
+        all_j = []
+        for x in range(self.num_pokemons):
+            if self.sequence[rand_gym_i + x]:
+                all_i.append(x)
+            if self.sequence[rand_gym_j + x]:
+                all_j.append(x)
+        if len(all_i) == 0 or len(all_j) == 0:
+            return
+        rand_i = random.choice(all_i)
+        rand_j = random.choice(all_j)
+        self.sequence[rand_gym_i + rand_i] = False
+        self.sequence[rand_gym_i + rand_j] = True
+        self.sequence[rand_gym_j + rand_j] = False
+        self.sequence[rand_gym_j + rand_i] = True
         self.valid = None
         self._fitness = None
+        
 
     def scramble_gymns(self):
         rand_gym_i = random.randrange(0, self.num_gyms)
@@ -240,7 +252,7 @@ class PokemonSelection(Chromosome):
 
 def init_generation(number_of_individuals:int) -> List[PokemonSelection]:
     new_pool = []
-    for individual_id in range(0, number_of_individuals):
+    for _ in range(0, number_of_individuals):
         new_individual = PokemonSelection(n_gyms, n_pokemons)
         while(not new_individual.is_valid):
             new_individual = PokemonSelection(n_gyms, n_pokemons)
@@ -282,6 +294,12 @@ def remove_random_pokemon(p: PokemonSelection) -> PokemonSelection:
 def exchange_pokemon(p: PokemonSelection) -> PokemonSelection:
     c = deepcopy(p)
     c.exchange_random_pokemon()
+    return c
+
+def exchange_multiple_pokemon(p: PokemonSelection) -> PokemonSelection:
+    c = deepcopy(p)
+    for _ in range(0,3):
+        c.exchange_random_pokemon()
     return c
 
 def scramble_gymns(p: PokemonSelection) -> PokemonSelection:
@@ -332,25 +350,24 @@ def gena():
             pool = cut_worst(pool, INIT_GENERATION)
         pool = pool + init_generation(5)
         
-        individuals_to_cross = [random_individual_to_crossover(pool) for _ in range(0, 3)]
-        individuals_to_cross2 = [random_individual_to_crossover(pool) for _ in range(0, 3)]
+        individuals_to_cross = [random_individual_to_crossover(pool) for _ in range(0, 10)]
+        individuals_to_cross2 = [random_individual_to_crossover(pool) for _ in range(0, 10)]
         cross_childs = []
         for x in range(0, len(individuals_to_cross)):
-            for y in range(0, len(individuals_to_cross2)):
-                if individuals_to_cross[x] != individuals_to_cross2[y]:
-                    child1,child2 = PokemonSelection.crossover(pool[individuals_to_cross[x]], pool[individuals_to_cross2[x]])
-                    if child1.is_valid:
-                        pool.append(child1)
-                        cross_childs.append(child1)
-                    if child2.is_valid:
-                        pool.append(child2)
-                        cross_childs.append(child2)
+            if individuals_to_cross[x] != individuals_to_cross2[x]:
+                child1,child2 = PokemonSelection.crossover(pool[individuals_to_cross[x]], pool[individuals_to_cross2[x]])
+                if child1.is_valid:
+                    pool.append(child1)
+                    cross_childs.append(child1)
+                if child2.is_valid:
+                    pool.append(child2)
+                    cross_childs.append(child2)
 
-        w_random_individuals = [pool[random_individual_to_crossover(pool)] for _ in range(0, 5)] + cross_childs
+        w_random_individuals = [pool[random_individual_to_crossover(pool)] for _ in range(0, 25)] + cross_childs
         _ = 1
         for x in w_random_individuals:
             prev = x
-            for f in [add_random_pokemon, scramble_gymns, exchange_pokemon, reverse_sequence, random_shift, add_random_pokemon, remove_random_pokemon, reverse_random_gym]:
+            for f in [scramble_gymns, exchange_pokemon, reverse_sequence, random_shift, remove_random_pokemon, add_random_pokemon, reverse_random_gym]:
                 prev = f(prev)
                 c = f(x)
                 if c.is_valid:
@@ -374,7 +391,7 @@ def gena():
     print(f"\n\nResult {pool[-1].calculate_time()} = {[list(compress(pokemon_name, x)) for x in pool[-1].cut_into_gyms()]}")
     result_per_gym = []
     i = 0
-    for gym in pool[0].cut_into_gyms():
+    for gym in pool[-1].cut_into_gyms():
         result_per_gym.append(gym_time(i, sum(compress(pokemon_power, gym))))
         i += 1
     return result_per_gym
