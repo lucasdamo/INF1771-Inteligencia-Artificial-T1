@@ -20,8 +20,8 @@ import pandas as pd
 
 POKEMON_MAX_ENERGY = 5
 INIT_GENERATION = 100
-MAX_POP = 500
-MAX_GENERATION_WITHOUT_IMPROVMENT = 100
+MAX_POP = 250
+MAX_GENERATION_WITHOUT_IMPROVMENT = 1
 
 
 input_path_dir = Path(__file__).parents[1].joinpath('input')
@@ -397,4 +397,15 @@ def gena():
         i += 1
     return result_per_gym
 
-a = gena()
+#a = gena()
+'''
+i = 0
+best = 0
+for i in range(100):
+    a = gena()
+    if '379.54' in str(sum(a)) :
+        print('BEST!')
+        best = best + 1
+print('succes rate ' + str(best) + '%')
+'''
+

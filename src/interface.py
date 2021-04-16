@@ -30,9 +30,6 @@ closed_nodes = []
 best_path = []
 aStar_struct = []
 
- # https://stackoverflow.com/questions/38535330/load-only-part-of-an-image-in-pygame
- # https://stackoverflow.com/questions/27867073/how-to-put-an-image-onto-a-sprite-pygame
-
 def main():
     global SCREEN
     global WINDOW_WIDTH
@@ -41,11 +38,9 @@ def main():
     global sprite_index
     global trainer_sprites
     global aStar_struct
-
     #Create map 
-
     pandas_map = Map(input_path.joinpath("map.csv"),input_path.joinpath("cellweights.csv"))
-
+    
     aStar_struct = Astar(pandas_map)
 
     WINDOW_HEIGHT  = pandas_map.xlen * blockSize # blocksize in px * tiles for map = size of window 
@@ -64,9 +59,7 @@ def main():
     trainer_pokeball_index = 0
     #invert position because map is inverted
     player_position = (pandas_map.start_point[1],pandas_map.start_point[0])
-    
     battle_list,trainers_list = setupBattles()
-
     next_step = 0 #variable to time player animation
 
     while running:
@@ -76,6 +69,8 @@ def main():
         drawTrainer(trainer_sprites,trainer_sprite_index,player_position)
         if not aStar_struct.over:
             drawAstar(open_nodes,closed_nodes)
+        if aStar_struct.over:
+            print('steps: ' + str(aStar_struct.steps))
         drawPokeballPath(pokeball_sprites,trainer_pokeball_index,best_path)
         pygame.display.update()
 
@@ -88,24 +83,21 @@ def main():
 def checkEvents():
     global sprite_index
     global trainer_sprites
-
     global open_nodes
     global closed_nodes
     global best_path
     global aStar_struct
-
     keys = pygame.key.get_pressed()
     if keys[K_SPACE]:
         aStar_struct.advance(1)
-        best_path,open_nodes,closed_nodes = aStar_struct.get_visual_elements()
-    
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             sys.exit()
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_s:
                 aStar_struct.solve()
-            best_path,open_nodes,closed_nodes = aStar_struct.get_visual_elements()
+    best_path,open_nodes,closed_nodes = aStar_struct.get_visual_elements()
+
                 
                 
 
@@ -143,8 +135,6 @@ def setupBattles():
         for x in range(len(map_list[y])):
             if map_list[y][x][0] == 'B':
                 battle_list.append((x,y))
-    
-
     trainers_list = [
         scaleToBlocksize(pygame.image.load(img_path.joinpath( 'trchar001.png'))),
         scaleToBlocksize(pygame.image.load(img_path.joinpath( 'trchar002.png'))),
@@ -161,9 +151,6 @@ def setupBattles():
     ]
 
     return battle_list, trainers_list
-
-
-    #TODO:make routine to remove coordinates from list if battle is won
 
 def drawBattles(battle_list,trainers_list):
     #draw each trainer in coordinate
@@ -222,7 +209,6 @@ def drawTrainer(trainer_sprites,index,player_position):
 
 def drawPokeballPath(pokeball_sprites,trainer_pokeball_index,best_path):
     global SCREEN
-
     index = trainer_pokeball_index
 
     for coordinates in best_path[:-1]: #won't show the ball on trainer
@@ -236,16 +222,13 @@ def drawAstar(open_nodes,closed_nodes):
     global SCREEN
 
     open_node_img = 'safari_bait.png'
-
     closed_node_img = 'safari_rock.png'
-
 
     open_node_src = pygame.image.load(img_path.joinpath( open_node_img))
     open_node_src = scaleToBlocksize(scaleToBlocksize(open_node_src))
     
     closed_node_src = pygame.image.load(img_path.joinpath( closed_node_img))
     closed_node_src = scaleToBlocksize(scaleToBlocksize(closed_node_src))
-
 
     for node_coordinates in open_nodes:
         node_coordinates = scaleCoordinates(node_coordinates)
