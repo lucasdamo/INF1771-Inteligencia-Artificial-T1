@@ -21,7 +21,7 @@ import pandas as pd
 POKEMON_MAX_ENERGY = 5
 INIT_GENERATION = 100
 MAX_POP = 250
-MAX_GENERATION_WITHOUT_IMPROVMENT = 1
+MAX_GENERATION_WITHOUT_IMPROVMENT = 50
 
 
 input_path_dir = Path(__file__).parents[1].joinpath('input')

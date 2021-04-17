@@ -1,6 +1,6 @@
 from os import stat
 import random
-from copy import copy
+from copy import deepcopy
 from itertools import compress
 from collections import deque
 from pathlib import Path
@@ -42,11 +42,7 @@ n_gyms = len(gym_level)
 n_pokemons = len(pokemon_name)
 n_gyms = len(gym_level)
 
-#print(gym_level)
-#print(n_gyms)
 
-#print(pokemon_name)
-#print(n_pokemons)
 def birthChildren(current_node:Node,pokemon_power:dict):    
     breed_children = []
 
@@ -57,7 +53,7 @@ def birthChildren(current_node:Node,pokemon_power:dict):
             j = 0
             while  j < n_pokemons:
                 if battle_list[i][j] == None:
-                    child = copy(current_node)
+                    child = deepcopy(current_node)
                     #print(child.pokemonList[i][j])
                     child.pokemonList[i][j] = name
                     child.time = getTotalTime (child.pokemonList,pokemon_power,gym_level)
@@ -75,24 +71,23 @@ def bruteForce(pokemon_name,pokemon_power,gym_level):
         empty_battles.append([None,None,None,None,None])
 
     working_node = Node(empty_battles, getTotalTime(empty_battles,pokemon_power,gym_level))
-    best_node = copy(working_node)
+    best_node = deepcopy(working_node)
     open_nodes = []
     open_nodes.append(working_node)
     children = []
     
     while open_nodes:
         working_node = open_nodes.pop(0)
-        #print('working_node  ' + str(working_node))
         if working_node.time < best_node.time:
             best_node = working_node
         children = birthChildren(working_node,pokemon_power)
         for _ in children:
             open_nodes.append(children.pop(0))
+        print(best_node.time)
     return best_node
 
 
 def NodeIsValid(current_node):
-    
     battle_list = current_node.pokemonList
     all_fighters = []
     for battle in battle_list:
@@ -123,19 +118,16 @@ empty_battles = []
 for _ in range(len(gym_level)):
     empty_battles.append([None,None,None,None,None])
 
-
-
-
 pokemon_power = {}
 for i in range(n_pokemons):
     pokemon_power[pokemon_name[i]] = pokemon_power_list[i]
 
 #test birthChildren
+'''
 children = birthChildren(Node(empty_battles, getTotalTime(empty_battles,pokemon_power,gym_level)),pokemon_power)
-for el in children:
-    print(el)
+print(children[0])
 '''
-best = bruteForce(pokemon_name,pokemon_power,gym_level)
 
+#DON'T RUN THIS CODE
+best = bruteForce(pokemon_name,pokemon_power,gym_level)
 print(best.time)
-'''

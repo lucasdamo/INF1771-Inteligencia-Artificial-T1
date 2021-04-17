@@ -43,8 +43,9 @@ class Astar:
             working_node = self.priority_queue.pop(0)
             self.closed_nodes.append(working_node)
             if working_node == self.end:
+                print ('steps: ' + str(self.steps))
                 self.over = True
-                self.path = []
+                self.path.clear()
                 self.path.append(invert_coordinates(working_node.coordinates))
                 while working_node.parent_node is not None:
                     self.path.append(invert_coordinates(working_node.parent_node.coordinates))

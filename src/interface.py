@@ -10,17 +10,13 @@ from spritesheet import Spritesheet
 from astar import Astar
 from pathlib import Path
 
-BLACK = (0, 0, 0)
-GREY = (160,160,160)
-WHITE = (200, 200, 200)
-RED = (255,0,0)
+
 WINDOW_HEIGHT = 0
 WINDOW_WIDTH = 0
 SCREEN = 0
 blockSize = 16 #Set the size of the grid block
 input_path = Path(__file__).parents[1].joinpath('input')
 img_path = Path(__file__).parents[1].joinpath('imagens')
-sound_path = Path(__file__).parents[1].joinpath('sound')
 map_list = 0
 sprite_index = 0
 trainer_sprites = []
@@ -69,8 +65,6 @@ def main():
         drawTrainer(trainer_sprites,trainer_sprite_index,player_position)
         if not aStar_struct.over:
             drawAstar(open_nodes,closed_nodes)
-        if aStar_struct.over:
-            print('steps: ' + str(aStar_struct.steps))
         drawPokeballPath(pokeball_sprites,trainer_pokeball_index,best_path)
         pygame.display.update()
 
@@ -108,20 +102,16 @@ def drawGrid():
     global SCREEN
     tiles_src = pygame.image.load(img_path.joinpath("BW_PublicOutside_New.png"))
     tiles_src = scaleToBlocksize(tiles_src)
+
+    dict_sprites = {'M' : (192/2,480/2,blockSize,blockSize),
+                    'R' : (64/2,0,blockSize,blockSize),
+                    'I' : (192/2,0,blockSize,blockSize),
+                    'F' : (128/2,0,blockSize,blockSize)
+                    }
+
     for y in range(len(map_list)):
         for x in range(len(map_list[y])):
-            if map_list[y][x] == 'M':
-                sprite_crop = (192/2,480/2,blockSize,blockSize)
-            elif map_list[y][x] == 'R':
-                sprite_crop = (64/2,0,blockSize,blockSize)
-            elif map_list[y][x] == '.':
-                sprite_crop = (32/2,0,blockSize,blockSize)
-            elif map_list[y][x] == 'B':
-                sprite_crop = (32/2,0,blockSize,blockSize)
-            elif map_list[y][x] == 'I':
-                sprite_crop = (192/2,0,blockSize,blockSize)
-            elif map_list[y][x] == 'F':
-                sprite_crop = (128/2,0,blockSize,blockSize)
+            sprite_crop = dict_sprites.get(map_list[y][x],(32/2,0,blockSize,blockSize))
             SCREEN.blit(tiles_src,(x*blockSize,y*blockSize),sprite_crop)
 
 
@@ -131,6 +121,7 @@ def setupBattles():
     global WINDOW_HEIGHT
     #create list of cordinates of battles to draw pokeballs
     battle_list = []
+
     for y in range(len(map_list)):
         for x in range(len(map_list[y])):
             if map_list[y][x][0] == 'B':
@@ -155,6 +146,7 @@ def setupBattles():
 def drawBattles(battle_list,trainers_list):
     #draw each trainer in coordinate
     i = -1
+
     for coordinates in battle_list:
         coordinates = scaleCoordinates(coordinates)
         coordinates[1] = coordinates[1] - blockSize/2 #raises trainer by half blocksize to level to ground
@@ -220,13 +212,10 @@ def drawPokeballPath(pokeball_sprites,trainer_pokeball_index,best_path):
 
 def drawAstar(open_nodes,closed_nodes):
     global SCREEN
-
     open_node_img = 'safari_bait.png'
     closed_node_img = 'safari_rock.png'
-
     open_node_src = pygame.image.load(img_path.joinpath( open_node_img))
     open_node_src = scaleToBlocksize(scaleToBlocksize(open_node_src))
-    
     closed_node_src = pygame.image.load(img_path.joinpath( closed_node_img))
     closed_node_src = scaleToBlocksize(scaleToBlocksize(closed_node_src))
 
@@ -234,7 +223,6 @@ def drawAstar(open_nodes,closed_nodes):
         node_coordinates = scaleCoordinates(node_coordinates)
         node_coordinates[0] = node_coordinates[0] + blockSize/4 #moves ball by half blocksize to center to ground
         SCREEN.blit(open_node_src,node_coordinates,(0,0,blockSize,blockSize))
-    
 
     for node_coordinates in closed_nodes:
         node_coordinates = scaleCoordinates(node_coordinates)
