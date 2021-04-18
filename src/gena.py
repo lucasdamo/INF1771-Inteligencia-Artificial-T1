@@ -7,14 +7,11 @@ This module implements a genetic algorithm to solve the combinatorial problem
 
 import random
 import time
-from collections import deque
 from copy import deepcopy
 from itertools import compress
-from os import stat
 from pathlib import Path
 from typing import Callable, List
 
-from math import floor
 import pandas as pd
 from tqdm import tqdm
 
@@ -376,7 +373,6 @@ def gena():
         loop.set_description(f"Pool {len(pool)} Best {previous_best.calculate_time()}")
         if len(pool) > MAX_POP:
             pool = cut_worst(pool, int(INIT_GENERATION / 2))
-        #pool = pool + init_generation(5)
         
         cross_childs = cross_individuals([pool[random_individual_to_crossover(pool, generations_without_improvement)] for _ in range(0, 10)], [pool[random_individual_to_crossover(pool, generations_without_improvement)] for _ in range(0, 10)])
         
@@ -398,24 +394,9 @@ def gena():
             loop.reset(MAX_GENERATION_WITHOUT_IMPROVMENT)
 
     print(f"\nTotal generations {total_generations}.\tExecution Time {time.time() - ini_time} seconds.\nResult {pool[-1].calculate_time()} = {[list(compress(pokemon_name, x)) for x in pool[-1].cut_into_gyms()]}")
-    return pool[-1].calculate_time()
     result_per_gym = []
     i = 0
     for gym in pool[-1].cut_into_gyms():
         result_per_gym.append(gym_time(i, sum(compress(pokemon_power, gym))))
         i += 1
     return result_per_gym
-
-#a = gena()
-'''
-i = 0
-best = 0
-for i in range(100):
-    a = gena()
-    if '379.54' in str(sum(a)) :
-        print('BEST!')
-        best = best + 1
-print('succes rate ' + str(best) + '%')
-'''
-
-a = gena()

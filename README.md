@@ -1,4 +1,10 @@
 # First assignment for the Artificial Intelligence Course
+Best pokemon set for the battles: 379.54278050230073 units of time
+
+The path and battles: X units of time
+
+To execute, run the code at [main.py](./src/main.py)
+## The assignment
 As the first assignment we have the problem to solve described on [enunciado.pdf (portuguese-BR)](./docs/enunciado.pdf) or as follows:
 >   A promising pokemon trainer of Viridian's city was invited to continue his training on Neon's city. To achieve his most desired training, he must go through Kanto's region. On this mission, our hero is taking his 5 pokemon and must go through several cities - 12 of which have gyminasiums
 >
@@ -45,4 +51,7 @@ All of those variables can be edited on /input/ except for the time equation.
 ## The solution
 As stated before, the path problem is solved by the [A* algortihm](./src/astar.py). It uses the manhattan distance to the final destination as its heuristic.
 
-For the combinatorial problem, we
+For the combinatorial problem, we decided to go with a genetic algorithm that we called [GENA](./src/gena.py). It consists on creating random initial choices to battle all gyms, that we call individuals or chromossomes. Then, the algorithm crosses the best individuals and make random modifications in order to create better children, which are measured by the total time spent on gyms.
+
+## Performance
+We were able to find the time mentioned result for the battles in less than 12 seconds. But it usually takes a little more and we can not garantee it will ever find the best solution.

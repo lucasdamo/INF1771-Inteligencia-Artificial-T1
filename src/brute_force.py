@@ -1,14 +1,8 @@
-from os import stat
-import random
 from copy import deepcopy
-from itertools import compress
-from collections import deque
 from pathlib import Path
-from typing import List
-from tqdm import tqdm
-import time
 
-import numpy as np
+from tqdm import tqdm
+
 import pandas as pd
 
 from collections import Counter
@@ -75,15 +69,16 @@ def bruteForce(pokemon_name,pokemon_power,gym_level):
     open_nodes = []
     open_nodes.append(working_node)
     children = []
-    
+    t = tqdm(total=59604644775390625000000000000000000000000)
     while open_nodes:
+        t.set_description(f"Best {best_node.time}")
+        t.update(1)
         working_node = open_nodes.pop(0)
         if working_node.time < best_node.time:
             best_node = working_node
         children = birthChildren(working_node,pokemon_power)
         for _ in children:
             open_nodes.append(children.pop(0))
-        print(best_node.time)
     return best_node
 
 

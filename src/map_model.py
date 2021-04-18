@@ -1,6 +1,5 @@
 import pandas as pd
 import numpy as np
-import pathlib
 from gena import gena
 
 class Map:
@@ -14,8 +13,6 @@ class Map:
         self.ylen = len(self.map.columns)
         self.heuristic_map = pd.DataFrame(0, index=np.arange(self.xlen), columns=np.arange(self.ylen)).apply(lambda row: abs(row.index - self.final_point[0]) + abs(int(row.name) - self.final_point[1]))
         
-
-
     def _get_unique_point(self, cellValue:str):
         loc = self.map.where(self.map == cellValue).dropna(how='all').dropna(axis=1,how='all')
         return loc.index[0], loc.columns[0]
