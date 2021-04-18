@@ -2,4 +2,4 @@
 *.code-workspace
 *.txt
 *./__pycache__/*
-.vscode
+*.pyc

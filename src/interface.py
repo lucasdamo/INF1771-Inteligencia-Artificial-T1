@@ -10,17 +10,13 @@ from spritesheet import Spritesheet
 from astar import Astar
 from pathlib import Path
 
-BLACK = (0, 0, 0)
-GREY = (160,160,160)
-WHITE = (200, 200, 200)
-RED = (255,0,0)
+
 WINDOW_HEIGHT = 0
 WINDOW_WIDTH = 0
 SCREEN = 0
 blockSize = 16 #Set the size of the grid block
 input_path = Path(__file__).parents[1].joinpath('input')
 img_path = Path(__file__).parents[1].joinpath('imagens')
-sound_path = Path(__file__).parents[1].joinpath('sound')
 map_list = 0
 sprite_index = 0
 trainer_sprites = []
@@ -30,9 +26,6 @@ closed_nodes = []
 best_path = []
 aStar_struct = []
 
- # https://stackoverflow.com/questions/38535330/load-only-part-of-an-image-in-pygame
- # https://stackoverflow.com/questions/27867073/how-to-put-an-image-onto-a-sprite-pygame
-
 def main():
     global SCREEN
     global WINDOW_WIDTH
@@ -41,11 +34,9 @@ def main():
     global sprite_index
     global trainer_sprites
     global aStar_struct
-
     #Create map 
-
     pandas_map = Map(input_path.joinpath("map.csv"),input_path.joinpath("cellweights.csv"))
-
+    
     aStar_struct = Astar(pandas_map)
 
     WINDOW_HEIGHT  = pandas_map.xlen * blockSize # blocksize in px * tiles for map = size of window 
@@ -64,9 +55,7 @@ def main():
     trainer_pokeball_index = 0
     #invert position because map is inverted
     player_position = (pandas_map.start_point[1],pandas_map.start_point[0])
-    
     battle_list,trainers_list = setupBattles()
-
     next_step = 0 #variable to time player animation
 
     while running:
@@ -88,24 +77,21 @@ def main():
 def checkEvents():
     global sprite_index
     global trainer_sprites
-
     global open_nodes
     global closed_nodes
     global best_path
     global aStar_struct
-
     keys = pygame.key.get_pressed()
     if keys[K_SPACE]:
         aStar_struct.advance(1)
-        best_path,open_nodes,closed_nodes = aStar_struct.get_visual_elements()
-    
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             sys.exit()
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_s:
                 aStar_struct.solve()
-            best_path,open_nodes,closed_nodes = aStar_struct.get_visual_elements()
+    best_path,open_nodes,closed_nodes = aStar_struct.get_visual_elements()
+
                 
                 
 
@@ -116,20 +102,16 @@ def drawGrid():
     global SCREEN
     tiles_src = pygame.image.load(img_path.joinpath("BW_PublicOutside_New.png"))
     tiles_src = scaleToBlocksize(tiles_src)
+
+    dict_sprites = {'M' : (192/2,480/2,blockSize,blockSize),
+                    'R' : (64/2,0,blockSize,blockSize),
+                    'I' : (192/2,0,blockSize,blockSize),
+                    'F' : (128/2,0,blockSize,blockSize)
+                    }
+
     for y in range(len(map_list)):
         for x in range(len(map_list[y])):
-            if map_list[y][x] == 'M':
-                sprite_crop = (192/2,480/2,blockSize,blockSize)
-            elif map_list[y][x] == 'R':
-                sprite_crop = (64/2,0,blockSize,blockSize)
-            elif map_list[y][x] == '.':
-                sprite_crop = (32/2,0,blockSize,blockSize)
-            elif map_list[y][x] == 'B':
-                sprite_crop = (32/2,0,blockSize,blockSize)
-            elif map_list[y][x] == 'I':
-                sprite_crop = (192/2,0,blockSize,blockSize)
-            elif map_list[y][x] == 'F':
-                sprite_crop = (128/2,0,blockSize,blockSize)
+            sprite_crop = dict_sprites.get(map_list[y][x],(32/2,0,blockSize,blockSize))
             SCREEN.blit(tiles_src,(x*blockSize,y*blockSize),sprite_crop)
 
 
@@ -139,12 +121,11 @@ def setupBattles():
     global WINDOW_HEIGHT
     #create list of cordinates of battles to draw pokeballs
     battle_list = []
+
     for y in range(len(map_list)):
         for x in range(len(map_list[y])):
             if map_list[y][x][0] == 'B':
                 battle_list.append((x,y))
-    
-
     trainers_list = [
         scaleToBlocksize(pygame.image.load(img_path.joinpath( 'trchar001.png'))),
         scaleToBlocksize(pygame.image.load(img_path.joinpath( 'trchar002.png'))),
@@ -162,12 +143,10 @@ def setupBattles():
 
     return battle_list, trainers_list
 
-
-    #TODO:make routine to remove coordinates from list if battle is won
-
 def drawBattles(battle_list,trainers_list):
     #draw each trainer in coordinate
     i = -1
+
     for coordinates in battle_list:
         coordinates = scaleCoordinates(coordinates)
         coordinates[1] = coordinates[1] - blockSize/2 #raises trainer by half blocksize to level to ground
@@ -222,7 +201,6 @@ def drawTrainer(trainer_sprites,index,player_position):
 
 def drawPokeballPath(pokeball_sprites,trainer_pokeball_index,best_path):
     global SCREEN
-
     index = trainer_pokeball_index
 
     for coordinates in best_path[:-1]: #won't show the ball on trainer
@@ -234,24 +212,17 @@ def drawPokeballPath(pokeball_sprites,trainer_pokeball_index,best_path):
 
 def drawAstar(open_nodes,closed_nodes):
     global SCREEN
-
     open_node_img = 'safari_bait.png'
-
     closed_node_img = 'safari_rock.png'
-
-
     open_node_src = pygame.image.load(img_path.joinpath( open_node_img))
     open_node_src = scaleToBlocksize(scaleToBlocksize(open_node_src))
-    
     closed_node_src = pygame.image.load(img_path.joinpath( closed_node_img))
     closed_node_src = scaleToBlocksize(scaleToBlocksize(closed_node_src))
-
 
     for node_coordinates in open_nodes:
         node_coordinates = scaleCoordinates(node_coordinates)
         node_coordinates[0] = node_coordinates[0] + blockSize/4 #moves ball by half blocksize to center to ground
         SCREEN.blit(open_node_src,node_coordinates,(0,0,blockSize,blockSize))
-    
 
     for node_coordinates in closed_nodes:
         node_coordinates = scaleCoordinates(node_coordinates)

@@ -20,8 +20,8 @@ from tqdm import tqdm
 
 POKEMON_MAX_ENERGY = 5
 INIT_GENERATION = 100
-MAX_POP = 500
-MAX_GENERATION_WITHOUT_IMPROVMENT = 100
+MAX_POP = 250
+MAX_GENERATION_WITHOUT_IMPROVMENT = 50
 
 
 input_path_dir = Path(__file__).parents[1].joinpath('input')
@@ -401,5 +401,17 @@ def gena():
         result_per_gym.append(gym_time(i, sum(compress(pokemon_power, gym))))
         i += 1
     return result_per_gym
+
+#a = gena()
+'''
+i = 0
+best = 0
+for i in range(100):
+    a = gena()
+    if '379.54' in str(sum(a)) :
+        print('BEST!')
+        best = best + 1
+print('succes rate ' + str(best) + '%')
+'''
 
 a = gena()

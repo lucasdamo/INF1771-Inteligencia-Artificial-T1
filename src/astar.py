@@ -2,11 +2,11 @@ import pathlib
 from map_model import Map
 
 class Node:
-    def __init__(self, coordinates, node_weight:int, parent):
+    def __init__(self, coordinates, node_weight:int, estimated_cost ,parent):
         self.coordinates = coordinates
         self.node_weight = node_weight
         self.total_path_cost = node_weight
-        self.estimated_cost = self.total_path_cost
+        self.estimated_cost = self.total_path_cost + estimated_cost
         self.parent_node = parent   #stores the parent to build the path
 
     def __eq__(self,another):
@@ -21,12 +21,13 @@ class Node:
 class Astar:
     def __init__(self,map : Map):
         self.map = map
-        self.start = Node(map.start_point,1, None)
-        self.end = Node(map.final_point,1, None)
+        self.start = Node(map.start_point,1,self.map.get_heuristic_weight(map.start_point), None)
+        self.end = Node(map.final_point,1,self.map.get_heuristic_weight(map.final_point), None)
         self.priority_queue = []
         self.closed_nodes = []
         self.path = []
         self.over = False
+        self.steps = 0
         
         self.priority_queue.append(self.start)
 
@@ -34,7 +35,7 @@ class Astar:
         steps = 1000
         while not self.over:
             self.advance(steps)
-            steps = steps * 1000 #calling in multiples to speed up
+            steps = steps * 1000 #calling in multiples for log n time where 'n' is number of total steps remaining
 
     def advance(self,steps): #advances the algorithm by the amount of steps provided
         while self.priority_queue and steps > 0 and not self.over:
@@ -42,7 +43,9 @@ class Astar:
             working_node = self.priority_queue.pop(0)
             self.closed_nodes.append(working_node)
             if working_node == self.end:
+                print ('steps: ' + str(self.steps))
                 self.over = True
+                self.path.clear()
                 self.path.append(invert_coordinates(working_node.coordinates))
                 while working_node.parent_node is not None:
                     self.path.append(invert_coordinates(working_node.parent_node.coordinates))
@@ -59,16 +62,18 @@ class Astar:
             if y-1 >= 0:
                 neighbours_coords.append((x, y-1))
 
+            #expand on each neighbor
             for n_coord in neighbours_coords:
                 node_weight_var = self.map.get_node_weight(n_coord)
-                neighbor_node = Node(n_coord,node_weight_var, working_node)
+                neighbor_node = Node(n_coord,node_weight_var,self.map.get_heuristic_weight(n_coord) ,working_node)
                 if neighbor_node in self.closed_nodes:
-                    continue
+                    continue #if neighbour has already been analysed
                 neighbor_node.total_path_cost = working_node.total_path_cost + neighbor_node.node_weight 
                 neighbor_node.estimated_cost = neighbor_node.total_path_cost + self.map.get_heuristic_weight(neighbor_node.coordinates)
                 #add neighbor in priority queue if it was not visited before or has lower heuristic value than it's previous instance
                 if(valid_new_open_node(self.priority_queue, neighbor_node)):
                     self.priority_queue.append(neighbor_node)
+            self.steps = self.steps + 1
             steps -= 1
         return
     def get_visual_elements(self):
@@ -106,64 +111,18 @@ class Astar:
 
 def invert_coordinates(c):
     return [c[1],c[0]]
-'''
-def Astar(map:Map):
-    start = Node(map.start_point,1, None)
-    end = Node(map.final_point,1, None)
 
-    priority_queue = []
-    closed_nodes = []
-
-    path = []
-
-    priority_queue.append(start)
-    while priority_queue:
-        priority_queue.sort()
-        working_node = priority_queue.pop(0)
-        closed_nodes.append(working_node)
-        if working_node == end:
-            path.append(working_node)
-            while working_node.parent_node is not None:
-                path.append(working_node.parent_node)
-                working_node = working_node.parent_node
-            return path
-        
-        x,y = working_node.coordinates
-        neighbours_coords = []
-        if x+1 < map.xlen:
-            neighbours_coords.append((x+1,y))
-        if y+1 < map.ylen:
-            neighbours_coords.append((x, y+1))
-        if x-1 >= 0:
-            neighbours_coords.append((x-1, y))
-        if y-1 >= 0:
-            neighbours_coords.append((x, y-1))
-
-        for n_coord in neighbours_coords:
-            neighbor_node = Node(n_coord, map.get_node_weight(n_coord), working_node)
-            if neighbor_node in closed_nodes:
-                continue
-            neighbor_node.total_path_cost = working_node.total_path_cost + neighbor_node.node_weight 
-            neighbor_node.estimated_cost = neighbor_node.total_path_cost + map.get_heuristic_weight(neighbor_node.coordinates)
-            
-            #add neighbor in priority queue if it was not visited before or has lower heuristic value than previous instance
-            if(valid_new_open_node(priority_queue, neighbor_node)):
-                priority_queue.append(neighbor_node)
-    
-    return None
-'''
 
 def valid_new_open_node(priority_queue, neighbor_node):
     for n in priority_queue:
         if (neighbor_node == n):
             if (neighbor_node.total_path_cost >= n.total_path_cost):
                 return False
-            else:
-                return True
     return True
 
-'''        
+'''    
 input_path = pathlib.Path(__file__).parents[1].joinpath('input')
 m = Map(input_path.joinpath('map.csv'), input_path.joinpath('cellweights.csv'))
-Astar(m)
+result = Astar(m)
+result.solve()
 '''
