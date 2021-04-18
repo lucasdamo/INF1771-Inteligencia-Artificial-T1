@@ -14,14 +14,14 @@ from os import stat
 from pathlib import Path
 from typing import Callable, List
 
-import numpy as np
+from math import floor
 import pandas as pd
 from tqdm import tqdm
 
 POKEMON_MAX_ENERGY = 5
-INIT_GENERATION = 100
+INIT_GENERATION = 25
 MAX_POP = 250
-MAX_GENERATION_WITHOUT_IMPROVMENT = 50
+MAX_GENERATION_WITHOUT_IMPROVMENT = 300
 
 
 input_path_dir = Path(__file__).parents[1].joinpath('input')
@@ -194,7 +194,7 @@ class PokemonSelection(Chromosome):
         return time
 
     def calculate_fitness(self) -> float:
-        return (( 1 / self.calculate_time() ) * 10000) ** 4
+        return (( 1 / self.calculate_time() ) * 10000)
 
     def add_random_pokemon(self):
         rand_int = random.randrange(0, self.num_gyms * self.num_pokemons)
@@ -267,18 +267,21 @@ def init_generation(number_of_individuals:int) -> List[PokemonSelection]:
     return sorted(new_pool, key=lambda x: x.fitness)
 
 
-def random_individual_to_crossover(pool:List[PokemonSelection]) -> int:
+def random_individual_to_crossover(pool:List[PokemonSelection], modifier:int=1) -> int:
     p = pool
+    if modifier > 10:
+        modifier = 10
     rand_i = random.randrange(0, 100) / 100
-    pool_total_fitness = sum(x.fitness for x in p)
+    pool_total_fitness = sum((x.fitness ** modifier) for x in p)
     for i in p:
-        if (i.fitness / pool_total_fitness) > rand_i:
+        i_fitness_modified = i.fitness ** modifier
+        if (i_fitness_modified / pool_total_fitness) > rand_i:
             return p.index(i)
-        rand_i -= i.fitness / pool_total_fitness
+        rand_i -= i_fitness_modified / pool_total_fitness
 
 def cut_worst(pool:List[PokemonSelection], n) -> List[PokemonSelection]:
     cut = pool[-n:]
-    cut = cut + init_generation(10)
+    cut = cut + init_generation(int(INIT_GENERATION / 2))
     cut = list(set(cut))
     return cut
 
@@ -372,12 +375,12 @@ def gena():
     while generations_without_improvement < MAX_GENERATION_WITHOUT_IMPROVMENT:
         loop.set_description(f"Pool {len(pool)} Best {previous_best.calculate_time()}")
         if len(pool) > MAX_POP:
-            pool = cut_worst(pool, INIT_GENERATION)
-        pool = pool + init_generation(5)
+            pool = cut_worst(pool, int(INIT_GENERATION / 2))
+        #pool = pool + init_generation(5)
         
-        cross_childs = cross_individuals([pool[random_individual_to_crossover(pool)] for _ in range(0, 10)], [pool[random_individual_to_crossover(pool)] for _ in range(0, 10)])
+        cross_childs = cross_individuals([pool[random_individual_to_crossover(pool, generations_without_improvement)] for _ in range(0, 10)], [pool[random_individual_to_crossover(pool, generations_without_improvement)] for _ in range(0, 10)])
         
-        w_random_individuals = [pool[random_individual_to_crossover(pool)] for _ in range(0, 25)] + cross_childs
+        w_random_individuals = [pool[random_individual_to_crossover(pool)] for _ in range(0, 5)] + cross_childs
         
         pool.extend(apply_disturbances(w_random_individuals, [scramble_gymns, exchange_pokemon, reverse_sequence, random_shift, remove_random_pokemon, add_random_pokemon, reverse_random_gym, exchange_multiple_pokemon]))
         
@@ -395,6 +398,7 @@ def gena():
             loop.reset(MAX_GENERATION_WITHOUT_IMPROVMENT)
 
     print(f"\nTotal generations {total_generations}.\tExecution Time {time.time() - ini_time} seconds.\nResult {pool[-1].calculate_time()} = {[list(compress(pokemon_name, x)) for x in pool[-1].cut_into_gyms()]}")
+    return pool[-1].calculate_time()
     result_per_gym = []
     i = 0
     for gym in pool[-1].cut_into_gyms():
