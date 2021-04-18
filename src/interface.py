@@ -3,7 +3,7 @@ from pygame.locals import *
 from pygame import mixer
 import pandas as pd
 import time
-from controllers import Map
+from map_model import Map
 import sys
 import numpy as np
 from spritesheet import Spritesheet

@@ -1,5 +1,5 @@
 import pathlib
-from controllers import Map
+from map_model import Map
 
 class Node:
     def __init__(self, coordinates, node_weight:int, parent):

@@ -5,18 +5,18 @@ This module implements a genetic algorithm to solve the combinatorial problem
 
 """
 
-from os import stat
 import random
+import time
+from collections import deque
 from copy import deepcopy
 from itertools import compress
-from collections import deque
+from os import stat
 from pathlib import Path
-from typing import List
-from tqdm import tqdm
-import time
+from typing import Callable, List
 
 import numpy as np
 import pandas as pd
+from tqdm import tqdm
 
 POKEMON_MAX_ENERGY = 5
 INIT_GENERATION = 100
@@ -336,6 +336,30 @@ def reverse_random_gym(p:PokemonSelection) -> PokemonSelection:
     c.reverse_random_gym()
     return c
 
+def cross_individuals(p1:List[PokemonSelection], p2:List[PokemonSelection]) -> List[PokemonSelection]:
+    cross_childs = []
+    for x in range(0, len(p1)):
+        if p1[x] != p2[x]:
+            child1,child2 = PokemonSelection.crossover(p1[x], p2[x])
+            if child1.is_valid:
+                cross_childs.append(child1)
+            if child2.is_valid:
+                cross_childs.append(child2)
+    return cross_childs
+
+def apply_disturbances(selected:List[PokemonSelection], func:List[Callable]) -> List[PokemonSelection]:
+    childs = []
+    for x in selected:
+        prev = x
+        for f in func:
+            prev = f(prev)
+            c = f(x)
+            if c.is_valid:
+                childs.append(c)
+        if prev.is_valid:
+            childs.append(prev)
+    return childs
+
 
 def gena():
     # Run the genetic algortihm
@@ -351,33 +375,14 @@ def gena():
             pool = cut_worst(pool, INIT_GENERATION)
         pool = pool + init_generation(5)
         
-        individuals_to_cross = [random_individual_to_crossover(pool) for _ in range(0, 10)]
-        individuals_to_cross2 = [random_individual_to_crossover(pool) for _ in range(0, 10)]
-        cross_childs = []
-        for x in range(0, len(individuals_to_cross)):
-            if individuals_to_cross[x] != individuals_to_cross2[x]:
-                child1,child2 = PokemonSelection.crossover(pool[individuals_to_cross[x]], pool[individuals_to_cross2[x]])
-                if child1.is_valid:
-                    pool.append(child1)
-                    cross_childs.append(child1)
-                if child2.is_valid:
-                    pool.append(child2)
-                    cross_childs.append(child2)
-
+        cross_childs = cross_individuals([pool[random_individual_to_crossover(pool)] for _ in range(0, 10)], [pool[random_individual_to_crossover(pool)] for _ in range(0, 10)])
+        
         w_random_individuals = [pool[random_individual_to_crossover(pool)] for _ in range(0, 25)] + cross_childs
-        _ = 1
-        for x in w_random_individuals:
-            prev = x
-            for f in [scramble_gymns, exchange_pokemon, reverse_sequence, random_shift, remove_random_pokemon, add_random_pokemon, reverse_random_gym, exchange_multiple_pokemon]:
-                prev = f(prev)
-                c = f(x)
-                if c.is_valid:
-                    pool.append(c)
-            if prev.is_valid:
-                pool.append(prev)
-                
+        
+        pool.extend(apply_disturbances(w_random_individuals, [scramble_gymns, exchange_pokemon, reverse_sequence, random_shift, remove_random_pokemon, add_random_pokemon, reverse_random_gym, exchange_multiple_pokemon]))
+        
 
-        # BUSCA GULOSA NA VIZINHANÇA
+        # Sort and update running info
         total_generations += 1
         pool.sort(key=lambda x: x.fitness)
         best = pool[-1]

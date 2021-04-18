@@ -39,13 +39,3 @@ class Map:
             current_battle = current_battle + 1
         return self.map.replace(cellweights).values.tolist()               
         
-
-class Agent:
-    def __init__(self):
-        self.x = None
-        self.y = None
-        self.time_spent = 0
-        pass
-
-    def move_to_coordinate(self, x:int, y:int):
-        pass
