@@ -13,9 +13,6 @@ class Node:
         self.pokemonList = pokemonList
         self.time = time #time used in battles
 
-    def __eq__(self,another):
-        return self.time == another.time
-
     def __lt__(self, another):
         return self.time < another.time
     
@@ -35,6 +32,8 @@ n_gyms = len(gym_level)
 
 n_pokemons = len(pokemon_name)
 n_gyms = len(gym_level)
+
+already_explored = {}
 
 
 def birthChildren(current_node:Node,pokemon_power:dict):    
@@ -69,10 +68,13 @@ def bruteForce(pokemon_name,pokemon_power,gym_level):
     open_nodes = []
     open_nodes.append(working_node)
     children = []
-    t = tqdm(total=59604644775390625000000000000000000000000)
+    t = tqdm(total=len(open_nodes))
     while open_nodes:
+        open_nodes.sort()
         t.set_description(f"Best {best_node.time}")
+        t.total = len(open_nodes)
         t.update(1)
+        t.refresh()
         working_node = open_nodes.pop(0)
         if working_node.time < best_node.time:
             best_node = working_node
@@ -82,17 +84,35 @@ def bruteForce(pokemon_name,pokemon_power,gym_level):
     return best_node
 
 
+
 def NodeIsValid(current_node):
+    hashed_node = get_hash(current_node)
+    if already_explored.get(hashed_node): #already expanding on similar outcome elsewhere
+            return  False
+    already_explored[hashed_node] = hashed_node
     battle_list = current_node.pokemonList
     all_fighters = []
     for battle in battle_list:
+        battle = list(filter(None, battle)) #remove None values from list
+        battle_count = list(Counter(battle).values())
+        if battle_count:
+            if max(battle_count) > 1:
+                return False #pokemon cannot repeat in battle
         for pokemon in battle:
-            if pokemon != None:
-                all_fighters.append(pokemon)
+            all_fighters.append(pokemon)
     pokemon_count = list(Counter(all_fighters).values())
     if max(pokemon_count) > POKEMON_MAX_ENERGY or sum(pokemon_count) >= POKEMON_MAX_ENERGY * POKEMON_MAX_ENERGY:
         return False # if pokemon is used more than max lives or no pokemon is alive at the end 
     return True
+
+def get_hash(node):
+    hashing = []
+    for i in range(len(node.pokemonList)):
+        l = list(filter(None, node.pokemonList[i]))
+        l.sort()
+        hashing.append(l)
+    return str(hashing)
+
 
 
 def getTotalTime (battles,pokemon_power,gym_level):
@@ -103,7 +123,7 @@ def getTotalTime (battles,pokemon_power,gym_level):
             if battles[i][j] != None:
                 battlePower = battlePower + pokemon_power[battles[i][j]]
         if battlePower == 0:
-            battlePower = 1
+            battlePower = 0.1
         battleTime = gym_level[i]/battlePower
         totalTime = totalTime + battleTime
     return totalTime
@@ -125,4 +145,4 @@ print(children[0])
 
 #DON'T RUN THIS CODE
 best = bruteForce(pokemon_name,pokemon_power,gym_level)
-print(best.time)
+print(best)
