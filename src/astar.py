@@ -21,8 +21,8 @@ class Node:
 class Astar:
     def __init__(self,map : Map):
         self.map = map
-        self.start = Node(map.start_point,1,self.map.get_heuristic_weight(map.start_point), None)
-        self.end = Node(map.final_point,1,self.map.get_heuristic_weight(map.final_point), None)
+        self.start = Node(map.start_point,0,self.map.get_heuristic_weight(map.start_point), None)
+        self.end = Node(map.final_point,0,self.map.get_heuristic_weight(map.final_point), None)
         self.priority_queue = []
         self.closed_nodes = []
         self.path = []
@@ -43,7 +43,7 @@ class Astar:
             working_node = self.priority_queue.pop(0)
             self.closed_nodes.append(working_node)
             if working_node == self.end:
-                print ('steps: ' + str(self.steps))
+                print ('path cost: ' + str(working_node.total_path_cost))
                 self.over = True
                 self.path.clear()
                 self.path.append(invert_coordinates(working_node.coordinates))
