@@ -66,6 +66,6 @@ We were able to find the time mentioned result for the battles in less than 12 s
 
 
 ## Explanation (pt-BR)
-<p align="center">
+
 [![EXPLANATION_PT_BR_YOUTUBE](https://img.youtube.com/vi/FeiCFcLdaTI/0.jpg)](https://www.youtube.com/watch?v=FeiCFcLdaTI)
-</p>
+
