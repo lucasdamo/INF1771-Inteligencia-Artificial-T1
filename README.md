@@ -9,6 +9,8 @@ Both: 672.54278050230073 units of time
 <img src="./docs/execution_gif.gif" style="text-align:center" width="450" height="450">
 
 </p>
+
+A better video representing the interface is avaliable <a href="./docs/pokevideo2.mp4"> here </a>
   
 To execute, run the code at <a href="./src/interface.py"> interface.py </a>
 
