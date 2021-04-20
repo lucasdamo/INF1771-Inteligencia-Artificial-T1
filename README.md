@@ -62,3 +62,7 @@ For the combinatorial problem, we decided to go with a genetic algorithm that we
 
 ## Performance
 We were able to find the time mentioned result for the battles in less than 12 seconds. But it usually takes a little more and we can not garantee it will ever find the best solution.
+
+
+## Explanation (pt-BR)
+[![EXPLANATION_PT_BR_YOUTUBE](https://img.youtube.com/vi/FeiCFcLdaTI/0.jpg)](https://www.youtube.com/watch?v=FeiCFcLdaTI)
