@@ -5,13 +5,12 @@ The path cost: 293 units of time
 
 Both: 672.54278050230073 units of time
 
-<center>
 
 ![execution_gif](./docs/execution_gif.gif)
 
-To execute, run the code at [main.py](./src/main.py)
+To execute, run the code at [interface.py](./src/interface.py)
 
-</center>
+
 ## The assignment
 As the first assignment we have the problem to solve described on [enunciado.pdf (portuguese-BR)](./docs/enunciado.pdf) or as follows:
 >   A promising pokemon trainer of Viridian's city was invited to continue his training on Neon's city. To achieve his most desired training, he must go through Kanto's region. On this mission, our hero is taking his 5 pokemon and must go through several cities - 12 of which have gyminasiums
