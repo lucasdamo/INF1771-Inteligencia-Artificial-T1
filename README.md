@@ -4,12 +4,13 @@ Best pokemon set for the battles: 379.54278050230073 units of time
 The path cost: 293 units of time
 
 Both: 672.54278050230073 units of time
+<p align="center">
+  
+<img src="./docs/execution_gif.gif" style="text-align:center" width="450" height="450">
 
-
-![execution_gif](./docs/execution_gif.gif)
-
-To execute, run the code at [interface.py](./src/interface.py)
-
+</p>
+  
+To execute, run the code at <a href="./src/interface.py"> interface.py </a>
 
 ## The assignment
 As the first assignment we have the problem to solve described on [enunciado.pdf (portuguese-BR)](./docs/enunciado.pdf) or as follows:
@@ -65,4 +66,6 @@ We were able to find the time mentioned result for the battles in less than 12 s
 
 
 ## Explanation (pt-BR)
+<p align="center">
 [![EXPLANATION_PT_BR_YOUTUBE](https://img.youtube.com/vi/FeiCFcLdaTI/0.jpg)](https://www.youtube.com/watch?v=FeiCFcLdaTI)
+</p>
