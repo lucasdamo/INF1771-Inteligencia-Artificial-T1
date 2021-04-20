@@ -6,11 +6,11 @@ The path cost: 293 units of time
 Both: 672.54278050230073 units of time
 <p align="center">
   
-<img src="./docs/execution_gif.gif" style="text-align:center" width="450" height="450">
+<img src="./docs/video_rota.gif" style="text-align:center" width="450" height="450">
 
 </p>
 
-A better video representing the interface is avaliable <a href="./docs/pokevideo2.mp4"> here </a>
+A better video representing the interface is avaliable <a href="./docs/video_rota.mp4"> here </a>
   
 To execute, run the code at <a href="./src/interface.py"> interface.py </a>
 

@@ -39,7 +39,6 @@ class Astar:
 
     def advance(self,steps): #advances the algorithm by the amount of steps provided
         while self.priority_queue and steps > 0 and not self.over:
-            self.priority_queue.sort()
             working_node = self.priority_queue.pop(0)
             self.closed_nodes.append(working_node)
             if working_node == self.end:
@@ -75,6 +74,7 @@ class Astar:
                     self.priority_queue.append(neighbor_node)
             self.steps = self.steps + 1
             steps -= 1
+            self.priority_queue.sort()
         return
     def get_visual_elements(self):
         path = self.get_best_path()
